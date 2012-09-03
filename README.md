@@ -17,6 +17,9 @@ So you can build, launch, or fail (not in that order) faster so you can move on 
 > 3. Do a **git init** and create a new repo for your project
 > 4. Make changes and break stuff
 
+**Example app**
+------------
+> Just to prove that this is running, there is an example app at http://naked-coffeescript.herokuapp.com/
 
 **Suggestions**
 ------------
