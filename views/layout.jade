@@ -1,0 +1,13 @@
+!!! 5
+html
+  head
+    title= typeof(title) !== 'undefined' ? title : "Untitled template"
+    meta(name='keywords', content='some,keywords')
+    meta(name='description', content='Whats the site about')
+    meta(name='og:image', content='http://path/to/thumbnail.png')
+    meta(name='og:title', content=typeof(title) !== 'undefined' ? title : "Untitled template")
+    link(rel='shortcut icon', href='http://path/to/favicon.png', type='image/x-icon') 
+  body
+    h1 #{typeof(title) !== 'undefined' ? title : "Untitled template"}
+    #main
+      != body
