@@ -50,31 +50,6 @@ app.get '/', (req, res) ->
 	res.render('default', {title: "nothing to see here"})
 
 
-###########
-# You got an API right? Maybe not, lets handle all the failures
-# TODO: Put it in the middleware cap'n
-###########
-# API 404 not found
-app.get '/api/*', (req, res) ->
-	error_code = 404
-	payload = {meta: 404, data: [], error: [{message: "Invalid endpoint or method", type: "404NotFound"}]}		
-	res.send(JSON.stringify(payload), error_code)
-
-app.put '/api/*', (req, res) ->
-	error_code = 404
-	payload = {meta: 404, data: [], error: [{message: "Invalid endpoint or method", type: "404NotFound"}]}		
-	res.send(JSON.stringify(payload), error_code)
-
-app.post '/api/*', (req, res) ->
-	error_code = 404
-	payload = {meta: 404, data: [], error: [{message: "Invalid endpoint or method", type: "404NotFound"}]}		
-	res.send(JSON.stringify(payload), error_code)
-
-app.delete '/api/*', (req, res) ->
-	error_code = 404
-	payload = {meta: 404, data: [], error: [{message: "Invalid endpoint or method", type: "404NotFound"}]}		
-	res.send(JSON.stringify(payload), error_code)
-
 # General 404 Not Found
 app.get '*', (req, res) ->
 	error_code = 404
