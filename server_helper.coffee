@@ -10,8 +10,12 @@ powered_by = (req, res, next) ->
 		res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
 		res.header 'Access-Control-Allow-Headers', 'Content-Type,Accept,Cookie'
 
-	# Means keep processing the request through server.coffee
-	next()
+		# Keep processing the request for now
+		next()
+	else
+		# Means keep processing the request through server.coffee
+		next()
+
 
 # Export out the function. Sharing is caring
 module.exports = {
