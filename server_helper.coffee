@@ -10,12 +10,6 @@ powered_by = (req, res, next) ->
 		res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
 		res.header 'Access-Control-Allow-Headers', 'Content-Type,Accept,Cookie'
 
-		#console.log 'Body: ' + req.body # {} means nothing
-		#console.log 'Params: ' + req.params # Can be undefined
-		#console.log 'Query: ' + req.query # {} means nothing
-		#console.log 'Endpoint URL: ' + req.originalUrl.replace('/api/','')
-		#console.log 'Method: ' + req.method
-
 		# TO ADD: Process endpoints library
 
 		error_code = 404
