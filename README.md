@@ -13,10 +13,13 @@ So you can build, launch, or fail (not in that order) faster so you can move on 
 **How**
 ------------
 > 1. Clone this project
-> 2. Delete the .git directory
+> 2. Do a **git archive --format=tar --prefix=AppName/ HEAD | (cd /App/BasePath && tar xf -)**
 > 3. Do a **git init** and create a new repo for your project
 > 4. Make changes and break stuff
 
+**Example app**
+------------
+> Just to prove that this is running, there is an example app at http://naked-coffeescript.herokuapp.com/
 
 **Suggestions**
 ------------
