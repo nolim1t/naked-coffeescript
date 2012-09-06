@@ -4,7 +4,7 @@ conf = {
 		authUrl: 'https://foursquare.com/oauth2/authorize',
 		tokenUrl: 'https://foursquare.com/oauth2/access_token',
 		baseUrl: 'https://api.foursquare.com/v2/'
-		accessToke: process.env.FOURSQUARECLIENTID,
+		accessToken: process.env.FOURSQUARECLIENTID,
 		accessSecret: process.env.FOURSQUARECLIENTSECRET,
 		redirUrl: process.env.FOURSQUAREREDIRURL,
 	}
