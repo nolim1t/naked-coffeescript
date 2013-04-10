@@ -50,6 +50,38 @@ app.get '/', (req, res) ->
 	res.render('default', {title: "nothing to see here"})
 
 
+# foursquare callback
+app.get '/your-4sq-callback-here', (req, res) ->
+	if req.query != undefined
+		if req.query['code'] != undefined
+			foursquare.auth.accesstoken req.query['code'], (cb) ->
+				if cb.status == 'ok'
+					mongo.dbhandler (db) ->
+						collection = db.collection 'users'
+						query = {foursquareid: cb.id}
+						collection.findOne query, (qerr, qfound) ->
+							if not qerr
+								if qfound == undefined
+									# No record! Create lets make one
+									record = {}
+									record.foursquareid = cb.id
+									record.accesstoken = cb.access_token
+									record.profile = cb.profile.contact
+									collection.save record, (saveerr, saverecord) ->
+										if not saveerr
+											res.render('allset', {title: "You're all set!", alreadyConnected: false})
+										else
+											res.send('Something broke', 500)
+								else
+									collection.update query, {accesstoken: cb.access_token, foursquareid: cb.id, profile: cb.profile.contact}, (errupdate, updatedprofile) -> console.log updatedprofile
+									res.render('allset', {title: "You're all set!", alreadyConnected: true})
+				else
+					res.send('Something broke', 500)
+		else
+			res.send('Incorrect parameters', 400)
+	else
+		res.send('Invalid', 400)
+
 # General 404 Not Found
 app.get '*', (req, res) ->
 	error_code = 404

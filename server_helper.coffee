@@ -1,3 +1,5 @@
+foursquarepush = require './lib/4sqpush.coffee'
+
 powered_by = (req, res, next) ->
 	res.removeHeader "X-Powered-By"
 	res.header "X-Powered-By", "Your mom <3"
@@ -11,7 +13,9 @@ powered_by = (req, res, next) ->
 		res.header 'Access-Control-Allow-Headers', 'Content-Type,Accept,Cookie'
 
 		# TO ADD: Process endpoints library
-
+		# EXAMPLE: foursquare push
+		if endpoint == "your-4sqpush-endpoint"
+			foursquarepush.handler req, res
 		error_code = 404
 		payload = {meta: error_code, data: [], info: {method: req.method, endpoint: req.originalUrl.replace('/api/','').split('?')[0], queryparams: req.query, bodyparams: req.body}, error: [{message: "Invalid endpoint or method", type: "404NotFound"}]}		
 		res.send(JSON.stringify(payload), error_code)
