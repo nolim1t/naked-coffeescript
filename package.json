@@ -18,5 +18,9 @@
         "jade": "0.26.0",
         "commander": "0.5.2",
         "mkdirp": "0.3.0"
+    },
+    "engines": {
+        "node": "0.8.x",
+        "npm": "1.1.x"
     }
 }
