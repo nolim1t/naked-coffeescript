@@ -1,0 +1,6 @@
+[submodule "lib/apicommon"]
+	path = lib/apicommon
+	url = git://github.com/nolim1t/apicommon.git
+[submodule "lib/mongo"]
+	path = lib/mongo
+	url = git://github.com/nolim1t/node-mongo-with-heroku.git
