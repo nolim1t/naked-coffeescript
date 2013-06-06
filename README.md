@@ -17,6 +17,10 @@ So you can build, launch, or fail (not in that order) faster so you can move on 
 > 3. Do a **git init** and create a new repo for your project
 > 4. Make changes and break stuff
 
+**Quick fix (6/6/13) **
+------------
+Fpr some reason the latest (as of this writing) version is not working. Delete all your node modules, then do a npm update with the package JSON file (from this repo) and it should work. Other than that I have no idea why it broke all of a sudden.
+
 **Example app**
 ------------
 > Just to prove that this is running, there is an example app at http://naked-coffeescript.herokuapp.com/
