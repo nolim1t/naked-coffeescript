@@ -12,7 +12,7 @@ powered_by = (req, res, next) ->
 		res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
 		res.header 'Access-Control-Allow-Headers', 'Content-Type,Accept,Cookie'
 
-        endpoint = req.originalUrl.replace('/api/','').split('?')[0]
+		endpoint = req.originalUrl.replace('/api/','').split('?')[0]
 
 		# TO ADD: Process endpoints library
 		# EXAMPLE: foursquare push
