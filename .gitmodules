@@ -4,3 +4,6 @@
 [submodule "lib/mongo"]
 	path = lib/mongo
 	url = git://github.com/nolim1t/node-mongo-with-heroku.git
+[submodule "lib/randomstring"]
+	path = lib/randomstring
+	url = git://github.com/nolim1t/randomstring.git
