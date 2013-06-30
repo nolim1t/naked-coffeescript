@@ -15,7 +15,10 @@ So you can build, launch, or fail (not in that order) faster so you can move on 
 > 1. Clone this project
 > 2. Do a **git archive --format=tar --prefix=AppName/ HEAD | (cd /App/BasePath && tar xf -)**
 > 3. Do a **git init** and create a new repo for your project
-> 4. Make changes and break stuff
+> 4. Do a **git add .** and add all the stuff to the new project
+> 5. rmdir lib/mongo ; rmdir lib/randomstring ; rmdir lib/apicommon
+> 6.  git submodule add git://github.com/nolim1t/apicommon.git lib/apicommon ; git submodule add git://github.com/nolim1t/node-mongo-with-heroku.git lib/mongo ; git submodule add git://github.com/nolim1t/randomstring lib/randomstring
+> 7. Make changes and break stuff
 
 **Quick fix (6/6/13) **
 ------------
