@@ -22,24 +22,28 @@ expresshelper = require './server_helper.coffee'
 request = require 'request' 
 # Generating guids
 uuid = require 'node-uuid'
+bodyParser = require 'body-parser'
+cookieParser = require 'cookie-parser'
+logger = require 'morgan'
+session = require 'express-session'
+serveStatic = require 'serve-static'
 
 # Lets start the show
-app = express.createServer()
+app = express()
 
-app.configure ->	
-	app.use express.logger()
-	app.use express.bodyParser()
-	app.use express.cookieParser()
-	# Load the middleware (server_helper.coffee)
-	# Pro-tip: You can build out a fully dynamic API from this
-	app.use expresshelper.headermiddleware
-	app.use expressValidator
-	app.use app.router
-	app.set 'view engine', 'jade'
-	app.set 'views', './views'
-	# Directory called static
-	app.use express.static(__dirname + '/static')
-	app.use express.session({ secret: "shh dont tell. but seriously, please change this" })
+app.use logger('dev')
+app.use bodyParser.urlencoded({ extended: true })
+app.use bodyParser.json()
+app.use cookieParser()
+# Load the middleware (server_helper.coffee)
+# Pro-tip: You can build out a fully dynamic API from this
+app.use expresshelper.headermiddleware
+app.use expressValidator
+app.set 'view engine', 'jade'
+app.set 'views', './views'
+# Directory called static
+app.use express.static(__dirname + '/static')
+app.use session({ secret: "Please change this secret", resave: true, saveUninitialized: true})
 
 ##########
 # If you got any other URL handlers you can put it here.
