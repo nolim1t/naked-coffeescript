@@ -44,6 +44,7 @@ app.set 'views', './views'
 # Directory called static
 app.use express.static(__dirname + '/static')
 app.use session({ secret: "Please change this secret", resave: true, saveUninitialized: true})
+app.use '/api/1', require('./sampleroutes.coffee')(express.Router()) # Example on how to use the routing
 
 ##########
 # If you got any other URL handlers you can put it here.
