@@ -11,6 +11,12 @@ module.exports = {
 		'ko': 'Status OK',
 		'ja': 'Status OK'
 	},
+	'errneedfullacct': {
+		'en': 'This feature requires a full account to be created',
+		'zh': 'This feature requires a full account to be created',
+		'ko': 'This feature requires a full account to be created',
+		'ja': 'This feature requires a full account to be created'
+	},
 	'unauthorized': {
 		'en': 'This feature requires valid login credentials',
 		'zh': '請登錄',
