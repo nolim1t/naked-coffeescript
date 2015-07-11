@@ -49,30 +49,6 @@ module.exports = (router) ->
 		}
 	]
 
-	for endpoint in endpoint_list
-		for action in endpoint.actions
-			switch action.method
-				when 'GET' 
-					router.get '/' + endpoint.endpoint, (req, res, next) ->
-						info = {language: req.language, method: req.method, urlpath: req.originalUrl, query: req.query}
-						require(action.includefile) info, (cb) -> 
-							res.status(cb.meta.code).send(JSON.stringify(cb))
-				when 'POST'
-					router.post '/' + endpoint.endpoint, (req, res, next) ->
-						info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
-						require(action.includefile) info, (cb) -> 
-							res.status(cb.meta.code).send(JSON.stringify(cb))
-				when 'DELETE'
-					router.delete '/' + endpoint.endpoint, (req, res, next) ->
-						info = {language: req.language, method: req.method, urlpath: req.originalUrl, query: req.query}
-						require(action.includefile) info, (cb) -> 
-							res.status(cb.meta.code).send(JSON.stringify(cb))
-				when 'PUT'
-					router.put '/' + endpoint.endpoint, (req, res, next) ->
-						info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
-						require(action.includefile) info, (cb) -> 
-							res.status(cb.meta.code).send(JSON.stringify(cb))
-
 	# Index 
 	router.get '/', (req, res, next) ->
 		methodlist = []
@@ -85,8 +61,27 @@ module.exports = (router) ->
 		
 		payload = {meta: {code: 200, msg: localization["okapistatus"][req.language]}, result: {lang: req.language, endpoints: methodlist}}
 		res.status(payload.meta.code).send(JSON.stringify(payload))
+
 	# Default Catchall
 	router.all '*', (req, res, next) ->
 		payload = {meta: {code: 404, msg: localization["methodnotfound"][req.language]}, result: {lang: req.language, method: req.method, path: req.originalUrl}}
-		res.status(payload.meta.code).send(JSON.stringify(payload))
+		discovered_endpoint = {}
+		discovered_action = {}
+		for endpoint in endpoint_list
+			if req.originalUrl.indexOf(endpoint.endpoint) != -1
+				discovered_endpoint = endpoint
+
+		if discovered_endpoint != {}
+			for action in discovered_endpoint.actions
+				if action.method == req.method
+					discovered_action = action
+
+			if discovered_action.includefile != undefined
+				info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
+				require(discovered_action.includefile) info, (cb) ->
+					res.status(cb.meta.code).send(JSON.stringify(cb))
+			else
+				res.status(payload.meta.code).send(JSON.stringify(payload))
+		else
+			res.status(payload.meta.code).send(JSON.stringify(payload))
 
