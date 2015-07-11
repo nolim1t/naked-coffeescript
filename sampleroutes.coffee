@@ -1,4 +1,5 @@
 localization = require './localization.coffee'
+accessmanager = require './lib/accessmanager.coffee'
 
 module.exports = (router) ->
 	router.use (req, res, next) ->
@@ -21,12 +22,21 @@ module.exports = (router) ->
 			req.language = 'en'
 
 		next()
-
+	
+	# Middleware to grab token
+	router.use (req, res, next) ->
+		if req.headers.token != undefined
+			accessmanager.validate {token: req.headers.token}, (cb) ->
+				req.accessInfo = cb
+				next()
+		else
+			next()
 	
 	endpoint_list = [
 		{
 			endpoint: 'test',
 			authrequired: 'no',
+			accountneeded: 'no',
 			visibility: 'public',
 			actions: [
 				{
@@ -71,15 +81,34 @@ module.exports = (router) ->
 			if req.originalUrl.indexOf(endpoint.endpoint) != -1
 				discovered_endpoint = endpoint
 
+		# Did we find an endpoint? Good lets find a valid action
 		if discovered_endpoint != {}
 			for action in discovered_endpoint.actions
 				if action.method == req.method
 					discovered_action = action
 
 			if discovered_action.includefile != undefined
-				info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
-				require(discovered_action.includefile) info, (cb) ->
-					res.status(cb.meta.code).send(JSON.stringify(cb))
+				info = {accessInfo: req.accessInfo, language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
+				if discovered_endpoint.authrequired == 'yes'
+					if req.accessInfo.validated == true
+						if discovered_endpoint.accountneeded == 'no'
+							require(discovered_action.includefile) info, (cb) ->
+								res.status(cb.meta.code).send(JSON.stringify(cb))
+						else 
+							if req.accessInfo.profilecreated == true
+								require(discovered_action.includefile) info, (cb) ->
+									res.status(cb.meta.code).send(JSON.stringify(cb))
+							else
+								payload.meta.code = 401
+								payload.meta.msg = localization["errneedfullacct"][req.language]
+								res.status(payload.meta.code).send(JSON.stringify(payload))
+					else
+						payload.meta.code = 401
+						payload.meta.msg = localization["unauthorized"][req.language]
+						res.status(payload.meta.code).send(JSON.stringify(payload))
+				else
+					require(discovered_action.includefile) info, (cb) ->
+						res.status(cb.meta.code).send(JSON.stringify(cb))
 			else
 				res.status(payload.meta.code).send(JSON.stringify(payload))
 		else
