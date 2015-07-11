@@ -27,7 +27,7 @@ module.exports = (router) ->
 		{
 			endpoint: 'test',
 			authrequired: 'no',
-			visibility: 'private',
+			visibility: 'public',
 			actions: [
 				{
 					method: 'GET',
