@@ -1,3 +1,5 @@
+localization = require './localization.coffee'
+
 module.exports = (router) ->
 	router.use (req, res, next) ->
 		# Router Middleware
@@ -21,25 +23,70 @@ module.exports = (router) ->
 		next()
 
 	
-	endpoint_list = ['test']
+	endpoint_list = [
+		{
+			endpoint: 'test',
+			authrequired: 'no',
+			visibility: 'private',
+			actions: [
+				{
+					method: 'GET',
+					includefile: './testmethod.coffee'
+				},
+				{
+					method: 'POST',
+					includefile: './testmethod.coffee'
+				},
+				{
+					method: 'PUT',
+					includefile: './testmethod.coffee'
+				},
+				{
+					method: 'DELETE',
+					includefile: './testmethod.coffee'
+				}
+			]
+		}
+	]
 
 	for endpoint in endpoint_list
-		router.get '/' + endpoint, (req, res, next) ->		
-			payload = {meta: {code: 200, msg: 'OK', method: 'GET'}, result: {lang: req.language}}
-			res.status(payload.meta.code).send(JSON.stringify(payload))
+		for action in endpoint.actions
+			switch action.method
+				when 'GET' 
+					router.get '/' + endpoint.endpoint, (req, res, next) ->
+						info = {language: req.language, method: req.method, urlpath: req.originalUrl, query: req.query}
+						require(action.includefile) info, (cb) -> 
+							res.status(cb.meta.code).send(JSON.stringify(cb))
+				when 'POST'
+					router.post '/' + endpoint.endpoint, (req, res, next) ->
+						info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
+						require(action.includefile) info, (cb) -> 
+							res.status(cb.meta.code).send(JSON.stringify(cb))
+				when 'DELETE'
+					router.delete '/' + endpoint.endpoint, (req, res, next) ->
+						info = {language: req.language, method: req.method, urlpath: req.originalUrl}
+						require(action.includefile) info, (cb) -> 
+							res.status(cb.meta.code).send(JSON.stringify(cb))
+				when 'PUT'
+					router.put '/' + endpoint.endpoint, (req, res, next) ->
+						info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body}
+						require(action.includefile) info, (cb) -> 
+							res.status(cb.meta.code).send(JSON.stringify(cb))
 
-		router.delete '/' + endpoint, (req, res, next) ->		
-			payload = {meta: {code: 200, msg: 'OK', method: 'DELETE'}, result: {lang: req.language}}
-			res.status(payload.meta.code).send(JSON.stringify(payload))
-
-		router.post '/' + endpoint, (req, res, next) ->		
-			payload = {meta: {code: 200, msg: 'OK', method: 'POST'}, result: {lang: req.language}}
-			res.status(payload.meta.code).send(JSON.stringify(payload))
-
-		router.put '/' + endpoint, (req, res, next) ->		
-			payload = {meta: {code: 200, msg: 'OK', method: 'PUT'}, result: {lang: req.language}}
-			res.status(payload.meta.code).send(JSON.stringify(payload))
-
-	router.all '*', (req, res, next) ->
-		payload = {meta: {code: 404, msg: 'Method or operation not found'}, result: {lang: req.language}}
+	# Index 
+	router.get '/', (req, res, next) ->
+		methodlist = []
+		for def in endpoint_list
+			if def.visibility == 'public'
+				actionlist = []
+				for action in def.actions
+					actionlist.push {method: action}
+				methodlist.push {endpoint: def.endpoint, protected: def.authrequired, actions: def.actionlist}
+		
+		payload = {meta: {code: 200, msg: localization["okapistatus"][req.language]}, result: {lang: req.language, endpoints: methodlist}}
 		res.status(payload.meta.code).send(JSON.stringify(payload))
+	# Default Catchall
+	router.all '*', (req, res, next) ->
+		payload = {meta: {code: 404, msg: localization["methodnotfound"][req.language]}, result: {lang: req.language, method: req.method, path: req.originalUrl}}
+		res.status(payload.meta.code).send(JSON.stringify(payload))
+
