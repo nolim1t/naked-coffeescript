@@ -64,12 +64,12 @@ module.exports = (router) ->
 							res.status(cb.meta.code).send(JSON.stringify(cb))
 				when 'DELETE'
 					router.delete '/' + endpoint.endpoint, (req, res, next) ->
-						info = {language: req.language, method: req.method, urlpath: req.originalUrl}
+						info = {language: req.language, method: req.method, urlpath: req.originalUrl, query: req.query}
 						require(action.includefile) info, (cb) -> 
 							res.status(cb.meta.code).send(JSON.stringify(cb))
 				when 'PUT'
 					router.put '/' + endpoint.endpoint, (req, res, next) ->
-						info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body}
+						info = {language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
 						require(action.includefile) info, (cb) -> 
 							res.status(cb.meta.code).send(JSON.stringify(cb))
 
