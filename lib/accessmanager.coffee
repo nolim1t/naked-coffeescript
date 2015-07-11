@@ -40,11 +40,22 @@ module.exports = {
 							result.meta.msg = 'Token not found'
 							cb(result)
 						else
-							result.meta.code = 0
-							result.meta.msg = 'Token Found'
-							result.validated = true
-							result.profilecreated = tfound.profilecreated
-							cb(result)
+							if info.profileupdate == true
+								record = tfound
+								record.profilecreated = true
+								collection.update query, record, (err, updated) -> updated
+								result.meta.code = 0
+								result.meta.msg = 'Token Found and updated'
+								result.validated = true
+								result.updated = true
+								cb(result)
+
+							else
+								result.meta.code = 0
+								result.meta.msg = 'Token Found'
+								result.validated = true
+								result.profilecreated = tfound.profilecreated
+								cb(result)
 		else
 			cb(result)
 }
