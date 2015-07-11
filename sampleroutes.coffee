@@ -90,18 +90,23 @@ module.exports = (router) ->
 			if discovered_action.includefile != undefined
 				info = {accessInfo: req.accessInfo, language: req.language, method: req.method, urlpath: req.originalUrl, body: req.body, query: req.query}
 				if discovered_endpoint.authrequired == 'yes'
-					if req.accessInfo.validated == true
-						if discovered_endpoint.accountneeded == 'no'
-							require(discovered_action.includefile) info, (cb) ->
-								res.status(cb.meta.code).send(JSON.stringify(cb))
-						else 
-							if req.accessInfo.profilecreated == true
+					if req.accessInfo != undefined
+						if req.accessInfo.validated == true
+							if discovered_endpoint.accountneeded == 'no'
 								require(discovered_action.includefile) info, (cb) ->
 									res.status(cb.meta.code).send(JSON.stringify(cb))
-							else
-								payload.meta.code = 401
-								payload.meta.msg = localization["errneedfullacct"][req.language]
-								res.status(payload.meta.code).send(JSON.stringify(payload))
+							else 
+								if req.accessInfo.profilecreated == true
+									require(discovered_action.includefile) info, (cb) ->
+										res.status(cb.meta.code).send(JSON.stringify(cb))
+								else
+									payload.meta.code = 401
+									payload.meta.msg = localization["errneedfullacct"][req.language]
+									res.status(payload.meta.code).send(JSON.stringify(payload))
+						else
+							payload.meta.code = 401
+							payload.meta.msg = localization["unauthorized"][req.language]
+							res.status(payload.meta.code).send(JSON.stringify(payload))						
 					else
 						payload.meta.code = 401
 						payload.meta.msg = localization["unauthorized"][req.language]
@@ -113,4 +118,3 @@ module.exports = (router) ->
 				res.status(payload.meta.code).send(JSON.stringify(payload))
 		else
 			res.status(payload.meta.code).send(JSON.stringify(payload))
-
