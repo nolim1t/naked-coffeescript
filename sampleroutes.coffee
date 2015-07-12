@@ -82,7 +82,7 @@ module.exports = (router) ->
 				discovered_endpoint = endpoint
 
 		# Did we find an endpoint? Good lets find a valid action
-		if discovered_endpoint != {}
+		if discovered_endpoint.actions != undefined
 			for action in discovered_endpoint.actions
 				if action.method == req.method
 					discovered_action = action
