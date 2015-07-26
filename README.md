@@ -2,7 +2,7 @@
 ------------
 This is a bare bones coffeescript+express powered server (foreman/heroku ready) to save you time.
 
-**UPDATE** - As of July 2015, this file is Docker ready!
+**UPDATE** - As of July 2015, this project is also Docker ready! So you it's still quite portable.
 
 **Why**
 ------------
@@ -10,7 +10,9 @@ Society (particularly in tech moves really fast). Nowadays it seems a LOT of peo
 
 So I've decided to copy one of my past projects which was *roughly structured* in this format and create a template for people to use (pull requests welcome!).
 
-So you can build, launch, or fail (not in that order) faster so you can move on to the next best thing. Unless of course the coffeescript fad passes haha
+So you can build, launch, or fail (not in that order) faster so you can move on to the next best thing. Unless of course the coffeescript fad passes haha.
+
+Also, this project serves as a digital resume of what I've been doing (that I can showcase publicly), as its been added to regularly.
 
 **How**
 ------------
@@ -26,13 +28,12 @@ So you can build, launch, or fail (not in that order) faster so you can move on 
 > 9. ``` docker build -t myid/myapp .```
 > 10. ``` docker run -e MONGOCONTAINER=mydb --link=mydb:mongodb -p 127.0.0.1:5000:3000  -it --name myapp -d=true myid/myapp```
 
-**Quick fix (6/6/13) **
-------------
-Fpr some reason the latest (as of this writing) version is not working. Delete all your node modules, then do a npm update with the package JSON file (from this repo) and it should work. Other than that I have no idea why it broke all of a sudden.
 
 **Example app**
 ------------
 > Just to prove that this is running, there is an example app at http://naked-coffeescript.herokuapp.com/
+
+**July 27th 2015*** - This has been outdated for a while, but it will be back soon.
 
 **Suggestions**
 ------------
