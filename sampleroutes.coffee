@@ -59,7 +59,7 @@ module.exports = (router) ->
 		}
 	]
 
-	# Index 
+	# Index
 	router.get '/', (req, res, next) ->
 		methodlist = []
 		for def in endpoint_list
@@ -68,8 +68,9 @@ module.exports = (router) ->
 				for action in def.actions
 					actionlist.push {method: action}
 				methodlist.push {endpoint: def.endpoint, protected: def.authrequired, actions: def.actionlist}
-		
+
 		payload = {meta: {code: 200, msg: localization["okapistatus"][req.language]}, result: {lang: req.language, endpoints: methodlist}}
+		res.header 'Cache-Control', 'no-transform,public,max-age=300,s-maxage=900'
 		res.status(payload.meta.code).send(JSON.stringify(payload))
 
 	# Default Catchall
@@ -80,6 +81,12 @@ module.exports = (router) ->
 		for endpoint in endpoint_list
 			if req.originalUrl.indexOf(endpoint.endpoint) != -1
 				discovered_endpoint = endpoint
+
+
+		if discovered_endpoint.strict == true
+			endpoint_name = req.originalUrl.replace('/1/','').split('?')[0]
+			if discovered_endpoint.endpoint != endpoint_name
+				discovered_endpoint = {}
 
 		# Did we find an endpoint? Good lets find a valid action
 		if discovered_endpoint.actions != undefined
@@ -94,27 +101,99 @@ module.exports = (router) ->
 						if req.accessInfo.validated == true
 							if discovered_endpoint.accountneeded == 'no'
 								require(discovered_action.includefile) info, (cb) ->
+									# BEGIN: CACHE Control
+									if cb.meta.cachecontrol != undefined
+										if cb.meta.cachecontrol.caching != undefined
+											cachestring = ''
+											if cb.meta.cachecontrol.caching == 'on'
+												cachestring = 'no-transform,public'
+												if cb.meta.cachecontrol.maxage != undefined
+													cachestring = cachestring + ',max-age=' + cb.meta.cachecontrol.maxage.toString()
+												else
+													cachestring = cachestring + ',max-age=300'
+												if cb.meta.cachecontrol.smaxage != undefined
+													cachestring = cachestring + ',' + 's-maxage=' + cb.meta.cachecontrol.smaxage.toString()
+												else
+													cachestring = cachestring + ',s-maxage=900'
+											else
+												cachestring = 'max-age=0, private, no-cache, no-store'
+											# Show the header based on settings
+											res.header 'Cache-Control', cachestring
+									else
+										# By default, dont cache APIs
+										res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
+									# END: CACHE Control
 									res.status(cb.meta.code).send(JSON.stringify(cb))
-							else 
+							else
 								if req.accessInfo.profilecreated == true
 									require(discovered_action.includefile) info, (cb) ->
+										# BEGIN: CACHE Control
+										if cb.meta.cachecontrol != undefined
+											if cb.meta.cachecontrol.caching != undefined
+												cachestring = ''
+												if cb.meta.cachecontrol.caching == 'on'
+													cachestring = 'no-transform,public'
+													if cb.meta.cachecontrol.maxage != undefined
+														cachestring = cachestring + ',max-age=' + cb.meta.cachecontrol.maxage.toString()
+													else
+														cachestring = cachestring + ',max-age=300'
+													if cb.meta.cachecontrol.smaxage != undefined
+														cachestring = cachestring + ',' + 's-maxage=' + cb.meta.cachecontrol.smaxage.toString()
+													else
+														cachestring = cachestring + ',s-maxage=900'
+												else
+													cachestring = 'max-age=0, private, no-cache, no-store'
+												# Show the header based on settings
+												res.header 'Cache-Control', cachestring
+										else
+											# By default, dont cache APIs
+											res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
+										# END: CACHE Control
 										res.status(cb.meta.code).send(JSON.stringify(cb))
 								else
 									payload.meta.code = 401
 									payload.meta.msg = localization["errneedfullacct"][req.language]
+									res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
 									res.status(payload.meta.code).send(JSON.stringify(payload))
 						else
 							payload.meta.code = 401
 							payload.meta.msg = localization["unauthorized"][req.language]
-							res.status(payload.meta.code).send(JSON.stringify(payload))						
+							res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
+							res.status(payload.meta.code).send(JSON.stringify(payload))
 					else
 						payload.meta.code = 401
 						payload.meta.msg = localization["unauthorized"][req.language]
+						res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
 						res.status(payload.meta.code).send(JSON.stringify(payload))
 				else
 					require(discovered_action.includefile) info, (cb) ->
+						# BEGIN: CACHE Control
+						if cb.meta.cachecontrol != undefined
+							if cb.meta.cachecontrol.caching != undefined
+								cachestring = ''
+								if cb.meta.cachecontrol.caching == 'on'
+									cachestring = 'no-transform,public'
+									if cb.meta.cachecontrol.maxage != undefined
+										cachestring = cachestring + ',max-age=' + cb.meta.cachecontrol.maxage.toString()
+									else
+										cachestring = cachestring + ',max-age=300'
+									if cb.meta.cachecontrol.smaxage != undefined
+										cachestring = cachestring + ',' + 's-maxage=' + cb.meta.cachecontrol.smaxage.toString()
+									else
+										cachestring = cachestring + ',s-maxage=900'
+								else
+									cachestring = 'max-age=0, private, no-cache, no-store'
+								# Show the header based on settings
+								res.header 'Cache-Control', cachestring
+						else
+							# By default, dont cache APIs
+							res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
+						# END: CACHE Control
 						res.status(cb.meta.code).send(JSON.stringify(cb))
 			else
+				res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
 				res.status(payload.meta.code).send(JSON.stringify(payload))
 		else
+			res.header 'Cache-Control', 'max-age=0, private, no-cache, no-store'
 			res.status(payload.meta.code).send(JSON.stringify(payload))
+
